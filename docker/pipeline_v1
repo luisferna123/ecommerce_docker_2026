@@ -98,30 +98,22 @@ pipeline {
                 echo '🚀 === INICIO: PROCESO DE DESPLIEGUE ==='
                 dir('docker') {
                     script {
-                        // 🧹 Limpieza de despliegue anterior
                         echo '1️⃣ Limpiando despliegue anterior...'
-                        try {
-                            sh "docker-compose -p ${DOCKER_PROJECT_NAME} down -v --remove-orphans"
-                        } catch (Exception e) {
-                            echo "⚠️ Advertencia: ${e.getMessage()}"
-                        }
+                        sh "docker compose -p ${DOCKER_PROJECT_NAME} down -v --remove-orphans || true"
 
-                        // 🏗️ Construcción y levantamiento de servicios
                         echo '2️⃣ Construyendo y levantando servicios...'
-                        sh "docker-compose -p ${DOCKER_PROJECT_NAME} up -d --build"
+                        sh "docker compose -p ${DOCKER_PROJECT_NAME} up -d --build"
 
-                        // 💾 Inicialización de la base de datos
                         echo '3️⃣ Inicializando base de datos...'
                         sleep(30)
                         sh "docker exec -i ${DB_CONTAINER_NAME} mysql -u${DB_USER} -p${DB_PASSWORD} ${DB_NAME} < ../sql/init.sql"
 
-                        // 🔍 Verificación de la base de datos
                         echo '4️⃣ Verificando estructura de la base de datos...'
                         sh "docker exec ${DB_CONTAINER_NAME} mysql -u${DB_USER} -p${DB_PASSWORD} -e 'USE ${DB_NAME}; SHOW TABLES;'"
 
-                        // ⏳ Espera y verificación de la aplicación
                         echo '5️⃣ Esperando inicio de la aplicación...'
                         sleep(30)
+
                         echo '6️⃣ Mostrando logs de la aplicación:'
                         sh "docker logs --tail 200 ${APP_CONTAINER_NAME}"
                     }
