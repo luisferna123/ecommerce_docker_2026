@@ -17,7 +17,7 @@ pipeline {
         DB_NAME = 'ecommerce_lp2_prod'
         DB_USER = 'root'
         DB_PASSWORD = 'admin123'
-        REPO_URL = 'https://github.com/arlysanchez/ecommerce_docker_2026.git'
+        REPO_URL = 'https://github.com/luisferna123/ecommerce_docker_2026.git'
     }
 
     stages {
